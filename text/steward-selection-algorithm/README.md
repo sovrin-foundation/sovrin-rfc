@@ -29,7 +29,7 @@ In the context of this RFC, a __problem__ is any adverse condition that might
 challenge the health of a node. For example, a network brownout might be a
 _problem_.
 
-A __fault__ is an event that leads to an individual node not adding value to
+A __fault__ is a problem that leads to an individual node not adding value to
 the consensus process. For example, if a node loses power, it is no longer able
 to talk to its peers and vote in the byzantine consensus algorithm, and is thus
 in a faulted state. Similarly, a node that has been hacked and is exhibiting
@@ -40,19 +40,26 @@ is unable to achieve consensus.
 
 Sovrin's byzantine guarantee is that it can tolerate up to __f__ faults before
 it fails, where the total number of nodes on the network, __n__, __= 3f + 1__.
-The major goal of the algorithm described here is to keep __f__ as low as
-possible, maximizing the distance (in faulted nodes) between the deployed
-network and a potential failure. It is assumed that a deployment where the
-__failure distance__ is 3 (3 more nodes would have to fault before the network
-experiences failure) is better than one where the failure distance is 2--and so on.
+The major goal of the algorithm described here is to keep significant downtime
+as low as possible, by ensuring that the number of faulted nodes stays as
+far away from __f__ as possible. It first does this by maximizing the distance
+(in faulted nodes) between the deployed network and a potential failure--that
+is, if we can find a combination of stewards where 10 would have to fail
+before the network is down, this is better than a combination where only
+3 would have to fail. Thus, a __failure distance__ of 10 is better than
+one where the failure distance is 3--and so on.
 
-Not all network failures merit are equally worrisome. The amount of consideration
-we give to one--its __importance__--should consider two factors--
-the __likelihood__ that it will happen, and the __significance__ of it
-if it _does_ occur. Although a meteor strike like the Chixculub impact that
-killed the dinosaurs has high significance, its likelihood (once every 100M years
-or so) is low enough that we don't include it in our disaster planning. Likewise,
-a downtime that happens, on average, once every 24 hours might sound terrible--
+If no combination of nodes can be found that prevents all downtime, then
+the best combination of nodes is the one where downtime is minimized because
+its nodes recover faster.
+
+The amount of consideration we give to a period of downtime--its
+__importance__--should consider two factors-- the __likelihood__ that it
+will happen, and the __significance__ of it if it _does_ occur. Although
+a meteor strike like the Chixculub impact that killed the dinosaurs has
+high significance, its likelihood (once every 100M years or so) is low
+enough that we don't include it in our disaster planning. Likewise, a
+downtime that happens, on average, once every 24 hours might sound terrible--
 but if it only lasts for 10 microseconds, its significance is so low as to be
 unimportant. Thus, __Importance (I) = Likelihood (L) * Significance (S)__.
 
@@ -62,8 +69,8 @@ one measure of likelihood for a given scenario can be derived from
 [__mean time between failures__ (__MTBF__)](
 https://en.wikipedia.org/wiki/Mean_time_between_failures
 ) metrics. The more time elapses between failures, the less likely it is to occur,
-so in a simple linear probability curve, an MTBF of 100 days could be converted
-into a 3.65% likelihood in a year.
+so in cases where a simple linear probability curve obtains, an MTBF of
+100 days could be converted into a 3.65% likelihood in a year.
 
 Significance can also be quantified with a familiar _systems reliability_
 concept, __mean time to repair__ (__MTTR__). This is a measure of downtime--
@@ -78,10 +85,10 @@ tolerate a natural disaster in Western Europe?_ _How well does it to tolerate
 a legal cease-and-desist in the United States?_. Each scenario will have a
 different likelihood and significance.
 
-Each steward may react different to each scenario. For example, a legal cease-and-desist
+Each steward may react differently to each scenario. For example, a legal cease-and-desist
 in the United States may have dramatic effect on stewards legally incorporated there,
 moderate effect on stewards who only do business in the U.S., and no effect at
-all on a university in China.
+all on an NGO in China.
 
 ### Algorithm Overview
 
@@ -96,9 +103,10 @@ much guesswork, possibly informed by experience and observational data.
 steward's node vulnerable in this scenario, such that it will probably fault?
 If so, how long will it take to recover?
 5. Based on 1-4, select the best combination of validator nodes, where
-"best" is defined as the one that has the least amount of downtime (if
-failure in some cases is unavoidable), or as the one that gives the most
-amount of importance-weighted failure distance, if we can avoid it altogether.
+"best" is defined as the one that has the greatest cumulative failure
+distance (if failures can be avoided altogether), or that has the least
+overall amount of importance-weighted downtime, if failures are
+unavoidable.
 
 How we accomplish Step 5 is worthy of discussion. We have a [combinatorics](
 https://en.wikipedia.org/wiki/Combinatorics) problem. If the total number of
@@ -123,52 +131,85 @@ choice in a highly important one.
 [reference]: #reference
 
 Live data on Sovrin stewards (Step 1) is maintained elsewhere. However, a
-sample spreadsheet has been prepared, showing how data might be entered
-and analyzed.
+[sample spreadsheet](http://bit.ly/2GoYXTG) has been prepared, showing
+how data might be entered and analyzed. Data from this spreadsheet has
+been downloaded in CSV format and saved with this spec (see
+[sample-data.csv](sample-data.csv), providing a reference data format
+and test data that can be used to exercise the algorithm.
 
-and is not publicized
-in a spreadsheet and will not be
-included here, since it changes regularly. 
-interface definitions, formal function prototypes, error codes,
-diagrams, and other technical details that might be looked up.
-Strive to guarantee that:
+In addition, a reference implementation has been written (see
+[select.py](select.py)). It is attached to and versioned with this RFC,
+and should function as an oracle for any alternative implementation.
+Its output on the sample data looks like this:
 
-- Interactions with other features are clear.
-- Implementation trajectory is well defined.
-- Corner cases are dissected by example.
+```bash
+$ python select.py --best 5 --f 1 sample-data.csv
+Analyzing 126 total 4-steward combinations (n=9, f=1).
+
+5 Best Steward Combinations, Ranked
+-----------------------------------
+1: Bank A+Tech Firm B+NGO E+Biotech Firm J: -8.71
+2: Bank A+University C+NGO E+Biotech Firm J: -11.21
+3: Bank A+NGO E+Government F+Biotech Firm J: -13.81
+4: Bank A+NGO E+Tech Firm H+Biotech Firm J: -15.06
+5: NGO E+Government F+Tech Firm H+Biotech Firm J: -16.8606
+```
+
+The score at the end of each line is negative, reflecting downtime. This
+is because the sample day has several common-mode failure scenarios. When
+run against [sample-data-with-no-common-mode-failures.csv](
+sample-data-with-no-common-mode-failures.csv), the output looks like
+this:
+
+```bash
+$ python select.py --best 5 --f 1 sample-data-with-no-common-mode-failures.csv
+Analyzing 126 total 4-steward combinations (n=9, f=1).
+
+5 Best Steward Combinations, Ranked
+-----------------------------------
+1: Bank A+NGO E+Tech Firm H+Biotech Firm J: 2.52065
+2: Bank A+Tech Firm B+Tech Firm H+Biotech Firm J: 3.378325
+3: Bank A+Law Firm D+Tech Firm H+Biotech Firm J: 2.17
+4: Bank A+Law Firm D+NGO E+Tech Firm H: -0.47
+5: Bank A+Law Firm D+NGO E+Biotech Firm J: -0.4594
+```
+
 
 # Drawbacks
 [drawbacks]: #drawbacks
 
-Why should we *not* do this?
+This algorithm requires quite a bit of computation. For example, the
+reference implementation took about 6 minutes to analyze 2.2 million
+steward combinations for n=27, f=6, on a nice 2017-vintage laptop
+(i7, 16 GB of RAM). There are undoubtedly optimizations possible, but
+even with these optimizations, an exhaustive algorithm may be too
+expensive to run continuously. Perhaps a reputation-based score could
+be imputed to a steward's node, based on monte-carlo simulations and/or
+historical performance?
+
+The algorithm is only as good as its input data--and much of the input
+data is guesswork. Guesses may get more accurate over time, but there
+is no guarantee that they will get accurate _enough_.
 
 # Rationale and alternatives
 [alternatives]: #alternatives
 
-- Why is this design the best in the space of possible designs?
-- What other designs have been considered and what is the rationale for not choosing them?
-- What is the impact of not doing this?
+Instead of trying to pick the optimal configuration of stewards in the
+abstract, across all time, we could spend more time monitoring the
+network and taking corrective action early. Enhanced monitoring is
+probably a good idea regardless of the selection algorithm we use,
+though the relative benefit of investing in it versus an optimizing
+algorithm is unknown.
 
 # Prior art
 [prior-art]: #prior-art
 
-Discuss prior art, both the good and the bad, in relation to this proposal.
-A few examples of what this can include are:
-
-- Does this feature exist in other SSI ecosystems and what experience have their community had?
-- For other teams: What lessons can we learn from other attempts?
-- Papers: Are there any published papers or great posts that discuss this? If you have some relevant papers to refer to, this can serve as a more detailed theoretical background.
-
-This section is intended to encourage you as an author to think about the lessons from other 
-implementers, provide readers of your RFC with a fuller picture.
-If there is no prior art, that is fine - your ideas are interesting to us whether they are brand new or if it is an adaptation from other languages.
-
-Note that while precedent set by other ecosystems is some motivation, it does not on its own motivate an RFC.
-Please also take into consideration that Indy sometimes intentionally diverges from common identity features.
+The field of systems reliability provides many examples of similar
+algorithms. This RFC captures mainstream thinking there.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
 
-- What parts of the design do you expect to resolve through the RFC process before this gets merged?
-- What parts of the design do you expect to resolve through the implementation of this feature before stabilization?
-- What related issues do you consider out of scope for this RFC that could be addressed in the future independently of the solution that comes out of this RFC?
+- How can/should the algorithm be optimized?
+- When and how will the algorithm be run?
+- How will results of the algorithm be used to adjust network configuration?

@@ -247,17 +247,19 @@ class ScenarioResult:
         self.failure_distance = self.f - self.fault_count
         if self.failure_distance < 0:
             relevant_mttrs.sort()
+            # The MTTR of the scenario is the time it will take for the i-th node to
+            # repair its fault, where i is the number of the node that finally
+            # gets the whole network back into consensus.
             self.mttr = relevant_mttrs[-(self.failure_distance + 1)]
+            self.importance = self.likelihood * self.mttr
         else:
+            # We don't have any repair time if we never lost consensus.
             self.mttr = 0
-        if self.failure_distance > -1:
-            self.score = sum(relevant_mttrs) / len(relevant_mttrs) * self.failure_distance
-        else:
-            self.score = (self.importance * self.failure_distance)
-    def __getattr__(self, item):
-        if item == 'importance':
-            return self.likelihood * self.mttr
-        raise AttributeError(item)
+            # The importance of an uptime is its likelihood * the average downtime of all
+            # the nodes in the scenario.
+            self.importance = self.likelihood * sum(relevant_mttrs) / len(relevant_mttrs)
+        # The score of a scenario is its importance * its failure_distance
+        self.score = (self.importance * self.failure_distance)
     def __cmp__(self, other):
         return self.score - other.score
 
@@ -291,8 +293,9 @@ def unique_combinations(items, n):
             for cc in unique_combinations(items[i + 1:], n - 1):
                 yield [items[i]] + cc
 
-def report(best):
-    title = '%d Best Steward Combinations, Ranked' % len(best.items)
+def report(best, f):
+    m = (3 * f) + 1
+    title = '%d Best %d-Steward Combinations, Ranked' % (len(best.items), m)
     print('\n' + title)
     print('-' * len(title))
     for i in range(len(best.items)):
@@ -302,7 +305,7 @@ def report(best):
 def select(fname, suggested_f, bestN):
     f, scenarios, liks, stewards, mttrs, faults = load_data(fname, suggested_f)
     results = analyze(f, scenarios, liks, stewards, mttrs, faults, bestN)
-    report(results)
+    report(results, f)
 
 class Tests(unittest.TestCase):
 
