@@ -118,7 +118,7 @@ to the problem) with a 0, as in:
 
 ![scenarios with faults](scenarios-with-faults.png)
 
-#### Input Paremters
+#### Input Parameters
 
 We use the data above to build parameters and data structures as follows:
 
@@ -187,11 +187,12 @@ With __N__ = 25 and __M__ = 15, we have about 3.3M combinations, and if we
 have to evaluate them against a dozen scenarios, we end up with about 39M
 scenario+combination pairs to analyze.)
 
-In practice, a manual analysis that is not exhaustive may be able to approximate
-the ideal answer by focusing only on the most important scenarios, as long as
-it doesn't perform averaging. Averages hide outliers in a way that is unsafe;
-a node that has average good performance in many scenarios may still be a terrible
-choice in a highly important one.
+In practice, a simplified analysis that is not exhaustive may find good
+answers--but not guarantee the optimal one--by focusing only on the most
+important scenarios, as long as it doesn't perform averaging. Averages
+hide outliers in a way that is unsafe; a node that has average good
+performance in many scenarios may still be a terrible choice in a highly
+important one.
 
 # Reference
 [reference]: #reference
@@ -200,7 +201,7 @@ Live data on Sovrin stewards (Step 1) is maintained elsewhere. However, a
 [sample spreadsheet](http://bit.ly/2GoYXTG) has been prepared, showing
 how data might be entered and analyzed. Data from this spreadsheet has
 been downloaded in CSV format and saved with this spec (see
-[sample-data.csv](sample-data.csv), providing a reference data format
+[sample-data.csv](sample-data.csv)), providing a reference data format
 and test data that can be used to exercise the algorithm.
 
 In addition, a reference implementation has been written (see
