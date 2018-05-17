@@ -210,7 +210,7 @@ class BestN:
 class ComboAnalysis:
     '''Encapsulate info about a single combination of stewards.'''
     def __init__(self, combo, stewards):
-        self.combo = combo
+        self.combo = sorted(combo)
         self.steward_indexes = [stewards.index(s) for s in combo]
         self.results = []
         self._total = None
@@ -220,8 +220,8 @@ class ComboAnalysis:
                 self._total = sum([r.score for r in self.results])
             return self._total
         raise AttributeError(item)
-    def __cmp__(self, other):
-        return self.combined_score - other.combined_score
+    def __lt__(self, other):
+        return self.combined_score < other.combined_score
     def __str__(self):
         return '%s: %s' % ('+'.join(self.combo), self.combined_score)
 
@@ -260,14 +260,15 @@ class ScenarioResult:
             self.importance = self.likelihood * sum(relevant_mttrs) / len(relevant_mttrs)
         # The score of a scenario is its importance * its failure_distance
         self.score = (self.importance * self.failure_distance)
-    def __cmp__(self, other):
-        return self.score - other.score
+    def __lt__(self, other):
+        return self.score < other.score
 
-def analyze(f, scenarios, liks, stewards, mttrs, faults, bestN):
+def analyze(f, scenarios, liks, stewards, mttrs, faults, bestN, quiet=False):
     m = (3 * f) + 1
     n = len(stewards)
     total_combinations = factorial(n) / (factorial(m) * factorial(n - m))
-    print('Analyzing %d total %d-steward combinations (n=%d, f=%d).' % (total_combinations, m, n, f))
+    if not quiet:
+        print('Analyzing %d total %d-steward combinations (n=%d, f=%d).' % (total_combinations, m, n, f))
     best = BestN(lambda x: x.combined_score, bestN)
     for combo in unique_combinations(stewards, m):
         analyze_combo(combo, best, scenarios, liks, stewards, mttrs, faults, f)
@@ -304,8 +305,8 @@ def report(best, f):
 
 def select(fname, suggested_f, bestN):
     f, scenarios, liks, stewards, mttrs, faults = load_data(fname, suggested_f)
-    results = analyze(f, scenarios, liks, stewards, mttrs, faults, bestN)
-    report(results, f)
+    best = analyze(f, scenarios, liks, stewards, mttrs, faults, bestN)
+    report(best, f)
 
 class Tests(unittest.TestCase):
 
@@ -322,6 +323,16 @@ class Tests(unittest.TestCase):
         self.assertAlmostEquals(sr.likelihood, .4)
         self.assertEquals(sr.mttr, 8)
         self.assertAlmostEquals(sr.score, -6.4)
+
+    def test_analyze(self):
+        stewards = 'A,B,C,D,E,F'.split(',')
+        scenarios = 'a,b,c'.split(',')
+        liks = [.5, .4, .3]
+        mttrs = [6,7,8,9,10,11]
+        faults = [[0,1,1],[1,0,0],[0,0,0],[1,1,1],[0,1,0],[1,0,1]]
+        best = analyze(1,scenarios,liks,stewards,mttrs,faults,3, quiet=True)
+        self.assertTrue(best.items[0].combined_score > best.items[1].combined_score)
+        self.assertTrue(best.items[1].combined_score > best.items[2].combined_score)
 
     def test_unique_combinations(self):
         fruit = 'apple,banana,orange,pear'.split(',')
