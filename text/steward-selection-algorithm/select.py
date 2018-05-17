@@ -256,7 +256,7 @@ class ScenarioResult:
             # We don't have any repair time if we never lost consensus.
             self.mttr = 0
             # The importance of an uptime is its likelihood * the average downtime of all
-            # the nodes in the scenario.
+            # the nodes in the scenario. This is just a rough approximation.
             self.importance = self.likelihood * sum(relevant_mttrs) / len(relevant_mttrs)
         # The score of a scenario is its importance * its failure_distance
         self.score = (self.importance * self.failure_distance)

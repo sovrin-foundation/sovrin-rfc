@@ -94,30 +94,96 @@ all on an NGO in China.
 
 At the highest level, the algorithm works like this:
 
+#### Prerequisities (Data)
+
 1. Enumerate all steward candidates and the key characteristics of their nodes.
+This produces data similar to what's shown below (though the specific columns
+may differ as we learn which attributes are useful discriminators):
+
+![steward profiles](steward-profiles.png)
+
 2. Define a set of failure scenarios. Include all scenarios that we consider
 worthy of serious attention.
-3. For each scenario, assign a likelihood (MTBF). This is likely to involve
-much guesswork, possibly informed by experience and observational data.
+
+3. For each scenario, assign a likelihood (MTBF). This will probably involve
+much guesswork, possibly informed by experience and observational data. For
+example, we might come up with scenarios like these:
+
+![scenarios](scenarios.png)
+
 4. For each scenario, analyze how each steward candidate performs. Is the
 steward's node vulnerable in this scenario, such that it will probably fault?
-If so, how long will it take to recover?
-5. Based on 1-4, select the best combination of validator nodes, where
+We can represent a fault with a 1 and a smooth continuation (no reaction
+to the problem) with a 0, as in:
+
+![scenarios with faults](scenarios-with-faults.png)
+
+#### Input Paremters
+
+We use the data above to build parameters and data structures as follows:
+
+* __stewards__: A list of steward names.
+* __mttrs__: A list of numbers that quantify how long stewards take to
+  respond to disasters. Same size as stewards list, with corresponding
+  indexes.
+* __scenarios__: A list of scenario names.
+* __likelihoods__: A list of numbers that derive from MTBF, and that
+  quantify the relative likelihood of the different scenarios. Same size
+  as sceanrios list, with corresponding indexes.
+* __faults__: A matrix of 1s and 0s, showing which stewards fault in
+  which scenarios. A list of lists, where the inner lists capture one
+  steward's fault profile across all scenarios, and the outer list is
+  the same size as the stewards list.
+
+Two additional input parameters are also supported:
+
+* __f__: How many faulty nodes should the network tolerate before it
+  fails? This number cannot exceed `int((num_stewards - 1) / 3)`. It
+  becomes an optimization constraint for the algorithm.
+* __bestN__: How bit should the list of best combinations be? We may
+  examine millions of possible steward combinations, but when we display
+  results, we only need to display a small list of good options.
+
+#### Computation
+
+We now select the best combination of validator nodes, where
 "best" is defined as the one that has the greatest cumulative failure
 distance (if failures can be avoided altogether), or that has the least
 overall amount of importance-weighted downtime, if failures are
 unavoidable.
 
-How we accomplish Step 5 is worthy of discussion. We have a [combinatorics](
-https://en.wikipedia.org/wiki/Combinatorics) problem. If the total number of
+The pseudocode for the computation is:
+
+```
+make an empty "bestN" list to hold our top combinations
+
+for each combination of stewards, C:
+  for each scenario, S:
+    compute a score for C@S, by:
+      if C@S is a failure:
+        find repair time, R, by:
+          adding back fastest-to-recover nodestill only f nodes are faulted
+        multiply R by likelihood for this scenario
+        make the sign of the score negative since it's a bad outcome
+      else:
+        figure out about how long the uptime victory of this non-failure is, by:
+           estimating how long downtime would list, on average, in failing combos
+        multiply this number by likelihood for this scenario
+        multiply by failure distance, since larger failure distance is better
+        make the scign of the score positive since it's a good outcome
+    add this scenario score to C's overall list of scenario scores
+  add up all the scenario scores to get a combined score for C
+  if C's score is good enough to be on the "bestN" list, put C in the list
+
+report results by sorting and dumping the "bestN" list
+```
+
+The code for this is relatively simple, but it has a [combinatorics](
+https://en.wikipedia.org/wiki/Combinatorics) challenge. If the total number of
 validator node candidates is __N__ and the desired number of _consensus-participating_
-stewards is __M__, then we have __N! / M!(N-M)!__ [combinations](
+stewards is __M__ (= 3 * __f__ + 1), then we have __N! / M!(N-M)!__ [combinations](
 https://en.wikipedia.org/wiki/Combination) of steward nodes that we can deploy.
-Ideally, we would analyze the failure status or failure distance for every
-possible combination of validator nodes, in every possible scenario, and
-we would weight failures by their importance. If this algorithm is automated,
-it may be possible to pick an optimal combination by brute force computation
-(with __N__ = 25 and __M__ = 15, we have about 3.3M combinations, and if we
+With __N__ = 25 and __M__ = 15, we have about 3.3M combinations, and if we
 have to evaluate them against a dozen scenarios, we end up with about 39M
 scenario+combination pairs to analyze.)
 
