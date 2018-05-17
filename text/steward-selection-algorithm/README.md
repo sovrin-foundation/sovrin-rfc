@@ -143,35 +143,38 @@ and should function as an oracle for any alternative implementation.
 Its output on the sample data looks like this:
 
 ```bash
-$ python select.py --best 5 --f 1 sample-data.csv
-Analyzing 126 total 4-steward combinations (n=9, f=1).
+ python select.py -f 1 --best 5 sample-data.csv
+ Analyzing 126 total 4-steward combinations (n=9, f=1).
 
-5 Best Steward Combinations, Ranked
------------------------------------
-1: Bank A+Tech Firm B+NGO E+Biotech Firm J: -8.71
-2: Bank A+University C+NGO E+Biotech Firm J: -11.21
-3: Bank A+NGO E+Government F+Biotech Firm J: -13.81
-4: Bank A+NGO E+Tech Firm H+Biotech Firm J: -15.06
-5: NGO E+Government F+Tech Firm H+Biotech Firm J: -16.8606
+5 Best 4-Steward Combinations, Ranked
+-------------------------------------
+1: Bank A+Biotech Firm J+Law Firm D+NGO E: -40.3194
+2: Bank A+Government F+Law Firm D+NGO E: -40.39
+3: Bank A+Law Firm D+NGO E+Tech Firm H: -40.405
+4: Bank A+Law Firm D+NGO E+Tech Firm B: -40.45425
+5: Bank A+Law Firm D+NGO E+University C: -40.5093
 ```
 
-The score at the end of each line is negative, reflecting downtime. This
-is because the sample day has several common-mode failure scenarios. When
-run against [sample-data-with-no-common-mode-failures.csv](
-sample-data-with-no-common-mode-failures.csv), the output looks like
-this:
+The score at the end of each line is negative, reflecting the fact that
+the sample data has a lot of downtime. This is partly because the sample
+data has several common-mode failure scenarios. Negative numbers don't
+equate with downtime, and positive numbers don't equate with failure
+distance, but the bigger the number, the better the score. When the
+algorithm runs against [sample-data-with-no-common-mode-failures.csv](
+sample-data-with-no-common-mode-failures.csv), the output looks somewhat
+better:
 
 ```bash
-$ python select.py --best 5 --f 1 sample-data-with-no-common-mode-failures.csv
+$ python select.py -f 1 --best 5 sample-data-with-no-common-mode-failures.csv
 Analyzing 126 total 4-steward combinations (n=9, f=1).
 
-5 Best Steward Combinations, Ranked
------------------------------------
-1: Bank A+NGO E+Tech Firm H+Biotech Firm J: 2.52065
-2: Bank A+Tech Firm B+Tech Firm H+Biotech Firm J: 3.378325
-3: Bank A+Law Firm D+Tech Firm H+Biotech Firm J: 2.17
-4: Bank A+Law Firm D+NGO E+Tech Firm H: -0.47
-5: Bank A+Law Firm D+NGO E+Biotech Firm J: -0.4594
+5 Best 4-Steward Combinations, Ranked
+-------------------------------------
+1: Bank A+Biotech Firm J+Tech Firm B+Tech Firm H: 3.378325
+2: Bank A+Biotech Firm J+NGO E+Tech Firm H: 2.52065
+3: Bank A+Biotech Firm J+Law Firm D+Tech Firm H: 2.17
+4: Bank A+Biotech Firm J+Law Firm D+NGO E: -0.4594
+5: Bank A+Law Firm D+NGO E+Tech Firm H: -0.47
 ```
 
 
