@@ -1,7 +1,7 @@
 - Name: steward-selection-algorithm
 - Author: Sam Smith, Daniel Hardman
 - Start Date: 2018-05-15
-- RFC PR: (leave this empty)
+- SIP PR: (leave this empty)
 - Jira Issue: (leave this empty)
 
 # Summary
@@ -25,9 +25,9 @@ run observer nodes or be "on deck" awaiting deployment.
 
 ### Key Concepts
 
-In the context of this RFC, a __problem__ is any adverse condition that might
-challenge the health of a node. For example, a network brownout might be a
-_problem_.
+In the context of this SIP, a __problem__ is any adverse condition that might
+challenge the health of a node. For example, a brownout of a node's network
+connection might be a _problem_.
 
 A __fault__ is a problem that leads to an individual node not adding value to
 the consensus process. For example, if a node loses power, it is no longer able
@@ -205,7 +205,7 @@ been downloaded in CSV format and saved with this spec (see
 and test data that can be used to exercise the algorithm.
 
 In addition, a reference implementation has been written (see
-[select.py](select.py)). It is attached to and versioned with this RFC,
+[select.py](select.py)). It is attached to and versioned with this SIP,
 and should function as an oracle for any alternative implementation.
 Its output on the sample data looks like this:
 
@@ -275,7 +275,7 @@ algorithm is unknown.
 [prior-art]: #prior-art
 
 The field of systems reliability provides many examples of similar
-algorithms. This RFC captures mainstream thinking there.
+algorithms. This SIP captures mainstream thinking there.
 
 # Unresolved questions
 [unresolved]: #unresolved-questions
