@@ -1,10 +1,10 @@
-- Name: steward-selection-algorithm
+- Name: 5001-steward-selection-algorithm
 - Author: Sam Smith, Daniel Hardman
 - Start Date: 2018-05-15
-- SIP PR: (leave this empty)
-- Jira Issue: (leave this empty)
+- Approval Date: 2018-06-15
+- SIP PR: https://github.com/sovrin-foundation/sovrin-sip/pull/2
 
-# Summary
+# SIP 5001: Steward Selection Algorithm
 [summary]: #summary
 
 Describes an algorithm for deciding which nodes will participate in consensus, based
@@ -12,7 +12,7 @@ on which ones are likely to add the least risk of network downtime. This algorit
 may be implemented with manual analysis at first; later, we imagine coding it into
 software to make selection automated.
 
-# Motivation
+## Motivation
 [motivation]: #motivation
 
 Sovrin needs a documented, objective method for deciding which stewards will run
@@ -20,7 +20,7 @@ validator nodes participating in consensus on the Sovrin Live Network (SLN), whi
 stewards will run validator nodes on the Sovrin Test Network (STN), and which will
 run observer nodes or be "on deck" awaiting deployment.
 
-# Tutorial
+## Tutorial
 [tutorial]: #tutorial
 
 ### Key Concepts
@@ -194,7 +194,7 @@ hide outliers in a way that is unsafe; a node that has average good
 performance in many scenarios may still be a terrible choice in a highly
 important one.
 
-# Reference
+## Reference
 [reference]: #reference
 
 Live data on Sovrin stewards (Step 1) is maintained elsewhere. However, a
@@ -245,7 +245,7 @@ Analyzing 126 total 4-steward combinations (n=9, f=1).
 ```
 
 
-# Drawbacks
+## Drawbacks
 [drawbacks]: #drawbacks
 
 This algorithm requires quite a bit of computation. For example, the
@@ -261,7 +261,7 @@ The algorithm is only as good as its input data--and much of the input
 data is guesswork. Guesses may get more accurate over time, but there
 is no guarantee that they will get accurate _enough_.
 
-# Rationale and alternatives
+## Rationale and alternatives
 [alternatives]: #alternatives
 
 Instead of trying to pick the optimal configuration of stewards in the
@@ -271,13 +271,13 @@ probably a good idea regardless of the selection algorithm we use,
 though the relative benefit of investing in it versus an optimizing
 algorithm is unknown.
 
-# Prior art
+## Prior art
 [prior-art]: #prior-art
 
 The field of systems reliability provides many examples of similar
 algorithms. This SIP captures mainstream thinking there.
 
-# Unresolved questions
+## Unresolved questions
 [unresolved]: #unresolved-questions
 
 - How can/should the algorithm be optimized?
