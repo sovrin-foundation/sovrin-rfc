@@ -167,10 +167,10 @@ for each combination of stewards, C:
         make the sign of the score negative since it's a bad outcome
       else:
         figure out about how long the uptime victory of this non-failure is, by:
-           estimating how long downtime would list, on average, in failing combos
+           estimating how long downtime would last, on average, in failing combos
         multiply this number by likelihood for this scenario
         multiply by failure distance, since larger failure distance is better
-        make the scign of the score positive since it's a good outcome
+        make the sign of the score positive since it's a good outcome
     add this scenario score to C's overall list of scenario scores
   add up all the scenario scores to get a combined score for C
   if C's score is good enough to be on the "bestN" list, put C in the list
