@@ -1,8 +1,12 @@
 - Name: Sovrin Crisis Management Plan
-- Author: Darrell O'Donnell
+- Author: Daniel Hardman, Chair TGB (.md by Darrell O'Donnell)
 - Start Date: 2018-08-15
 - PR: -
 - Jira Issue: --
+
+# TEMPORARY
+
+Based on the [original Google Docs version](https://docs.google.com/document/d/1TBpC4ZwVn87cHE29b_YnzqyzEliREyb6966kA339cpE/edit?usp=sharing) .
 
 # Summary
 [summary]: #summary
