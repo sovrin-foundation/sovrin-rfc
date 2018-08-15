@@ -8,7 +8,7 @@
 [summary]: #summary
 
 This document describes how Sovrin will respond to urgent crises such as a downed network, a corrupted ledger, etc. For 
-immediate action items, see [Appendix A](#appendix-a-recommendations-for-immediate-action). For a step-by-step crisis checklist, see Appendix B.
+immediate action items, see [Appendix A](#appendix-a---recommendations-for-immediate-action). For a step-by-step crisis checklist, see Appendix B.
 
 # Rationale and Scope
 [rationale]: #rationale
