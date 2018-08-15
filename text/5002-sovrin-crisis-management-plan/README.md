@@ -79,7 +79,7 @@ does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
 
-#Appendix A - Recommendations for Immediate Action
+# Appendix A - Recommendations for Immediate Action
 [appendixa]: #appendixa
 
 1. ***Staff the Triage Committee.***
