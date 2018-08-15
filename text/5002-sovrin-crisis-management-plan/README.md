@@ -8,14 +8,14 @@
 [summary]: #summary
 
 This document describes how Sovrin will respond to urgent crises such as a downed network, a corrupted ledger, etc. For 
-immediate action items, see Appendix A. For a step-by-step crisis checklist, see Appendix B.
+immediate action items, see [Appendix A](#appendix-a-recommendations-for -immediate-action). For a step-by-step crisis checklist, see Appendix B.
 
 # Rationale and Scope
 [rationale]: #rationale
 
 No matter how robust Sovrin is, it is possible that the network could become unavailable or untrustworthy due to attack 
 or disaster. In a crisis, we need to take speedy action. This mechanism should meet the same high standards for diffuse 
-trust and for transparency that normal Sovrin governance does; we don’t want attackers to create a fake crisis and then 
+trust and for transparency that [normal Sovrin governance does](https://docs.google.com/document/d/18V1c0rOQYxNMleuV_2z7yQny0KdBnuDkWlN8DNUrioM/edit); we don’t want attackers to create a fake crisis and then 
 manipulate us through it, and we don’t want to become unsafe in our responses.
 
 The scope of concern here is separate from our Vulnerability Management Protocol; that is about triaging and responding 
@@ -78,6 +78,23 @@ Note that while precedent set by other communities is some motivation, it
 does not on its own motivate an enhancement proposal here. Please also take
 into consideration that Indy sometimes intentionally diverges from common
 identity features.
+
+#Appendix A - Recommendations for Immediate Action#
+[appendixa]: #appendixa
+
+1. ***Staff the Triage Committee.***
+1. Implement a “**last known good version**” of software as part of the upgrade protocol, such that a fallback version of the software is known and available to (e.g., predownloaded by) all parties before an upgrade proceeds.
+1. Develop and practice a (non-automated) **methodology for hotfixing nodes**.
+1. Engage a cybersecurity Incident Response team to be on call for the network.
+1. Create a discretionary budget that the Triage Committee can spend without further approval (e.g., $5k). This would allow certain solutions to be triggered far more quickly.
+1. ***Create a decision-maker/approval matrix*** that shows who needs to be contacted about certain types of decisions. Who can speak to the press? Who can call a lawyer in the US or Europe or Asia? Who can approve expenditures > $5k? Who can approve suspending the entire network for 30 secs? For 30 min? Who can approve forking the code?
+1. Create a “ledger explorer” tool that facilitates low-level dumping of ledger records, for forensic purposes.
+1. Implement mechanisms that allow validator nodes to whitelist one another, such that all consensus-related traffic occurs between IP addresses and ports that are explicitly allowed, where all other traffic is dropped. Importantly, this mechanism needs to adjust firewall config in realtime as machines are added to or removed from the consensus pool on the ledger.
+1. **Re-analyze the auto-blacklist feature** (where nodes get negative reputation if they cease to respond) for safety. In scenarios where a service interruption happens for innocent reasons (a typhoon, earthquake, legal takedown order, or DDoS against a single node), we do not want the rest of the network to blacklist too quickly. (Or perhaps we are willing to tolerate a quick blacklist, as long as recovery of reputation is straightforward.)
+1. ***Cultivate a PR contact that can help manage press releases***. (Possibly this could be done by the marketing folks for Sovrin or Evernym?)
+1. ***Practice at least one crisis scenario.***
+1. Schedule a refresh of this plan at least quarterly.
+
 
 # Appendix B - Crisis Checklist #
 
