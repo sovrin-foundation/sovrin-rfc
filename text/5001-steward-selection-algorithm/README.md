@@ -140,7 +140,7 @@ Two additional input parameters are also supported:
 * __f__: How many faulty nodes should the network tolerate before it
   fails? This number cannot exceed `int((num_stewards - 1) / 3)`. It
   becomes an optimization constraint for the algorithm.
-* __bestN__: How bit should the list of best combinations be? We may
+* __bestN__: How big should the list of best combinations be? We may
   examine millions of possible steward combinations, but when we display
   results, we only need to display a small list of good options.
 
@@ -193,6 +193,18 @@ important scenarios, as long as it doesn't perform averaging. Averages
 hide outliers in a way that is unsafe; a node that has average good
 performance in many scenarios may still be a terrible choice in a highly
 important one.
+
+Other factors may also be used to choose among alternatives that are equivalently
+good from a pure failure perspective. For example, we might choose to value a
+round-robin characteristic, where nodes share the opportunity to participate in
+consensus--all else being equal, the node that's been participating in consensus
+most recently is downvoted to give another node a chance. We might also choose
+to vote against multiple nodes being run by the same organization, where "same"
+could mean the same legal entity, or the same site of a multinational corp,
+or the same IT staff. These might not be criteria based strictly on failure
+modes, but might be important for logistical or political reasons. Such choices
+are outside the strict scope of the current algorithm, but are at least
+imagined to be compatible with it.
 
 ## Reference
 [reference]: #reference
