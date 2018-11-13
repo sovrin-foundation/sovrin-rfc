@@ -129,7 +129,7 @@ We use the data above to build parameters and data structures as follows:
 * __scenarios__: A list of scenario names.
 * __likelihoods__: A list of numbers that derive from MTBF, and that
   quantify the relative likelihood of the different scenarios. Same size
-  as sceanrios list, with corresponding indexes.
+  as scenarios list, with corresponding indexes.
 * __faults__: A matrix of 1s and 0s, showing which stewards fault in
   which scenarios. A list of lists, where the inner lists capture one
   steward's fault profile across all scenarios, and the outer list is
