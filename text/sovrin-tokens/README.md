@@ -69,6 +69,15 @@ payment transactions. Setting fees records a fee schedule to the existing config
 sub-ledger. There is also a cache of unspent transaction outputs, or
 _UTXOs_.
 
+### Denomination
+- Each Sovrin token consists of 1 x 10<sup>9</sup> sovatoms.
+- Sovatoms are not further divisible.
+- All `amount` fields in payment APIs are denominated in sovatoms.
+  - This allows transaction calculations to be performed on integers.
+- This allows 10 x 10<sup>9</sup> (10 billion) Sovrin tokens to be minted,
+and for all of the resulting 10 x 10<sup>18</sup> sovatoms to be stored
+using a 64-bit integer.
+
 ### The Payment Ledger
 The payment ledger makes use of Plenum to come to consensus about payment
 transactions. The validation of these transactions includes:
