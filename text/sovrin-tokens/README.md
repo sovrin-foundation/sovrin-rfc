@@ -16,8 +16,8 @@ well as the data structures and protocols around recording token transactions.
 [motivation]: #motivation
 
 ### To protect the Sovrin Ledger
-The Sovrin instantiation of Hyperledger Indy, or the Sovrin Ledger, is a public-
-permissioned distributed ledger.
+The Sovrin instantiation of Hyperledger Indy, or the Sovrin Ledger, is a
+public-permissioned distributed ledger.
 - It is public, in that anyone should be able to read from the ledger.
 - It is permissioned, in that only a select set of validator nodes may write to
 the ledger.
@@ -27,7 +27,7 @@ to be written to the ledger, the party must either hold a certain role known as
 a Trust Anchor, or process the transaction request through a Trust Anchor. This
 role is granted to validators and stewards of the Sovrin Ledger, and other
 "trusted" entities. The purpose of the Trust Anchor role is to protect the
-ledger.
+ledger from malicious transaction requests.
 
 Changing this to allow anyone to submit transactions to the validators is
 problematic. If anyone with a network connection may submit transaction requests
@@ -65,17 +65,17 @@ processed atomically with those transactions, so they fail or succeed together.
 
 The infrastructure for value transfer on the Sovrin ledger consists of a
 payments sub-ledger (much like the domain and pool sub-ledgers) that records
-payment transactions. Setting fees records a fee schedule to the existing config
+payment transactions. Setting fees writes a fee schedule to the existing config
 sub-ledger. There is also a cache of unspent transaction outputs, or
 _UTXOs_.
 
 ### Denomination
 - Each Sovrin token consists of 1 x 10<sup>9</sup> sovatoms.
-- Sovatoms are not further divisible.
+- Sovatoms are the smallest unit and are not further divisible.
 - All `amount` fields in payment APIs are denominated in sovatoms.
   - This allows transaction calculations to be performed on integers.
-- This allows 10 x 10<sup>9</sup> (10 billion) Sovrin tokens to be minted,
-and for all of the resulting 10 x 10<sup>18</sup> sovatoms to be stored
+- 1 x 10<sup>10</sup> (10 billion) Sovrin tokens may be minted,
+and all of the resulting 1 x 10<sup>19</sup> sovatoms may be stored
 using a 64-bit integer.
 
 ### The Payment Ledger
@@ -111,8 +111,9 @@ Verification Key>\<Checksum></code>. An address is the identifier for some
 number of UTXOs. Each UTXO contains some number of tokens.
 
 A *payment key* is the Ed25519 signing key that corresponds to the verification
-key in the payment address. To verify that a value transfer is authorized, a
-signature over the transaction by the payment key is required.
+key in the payment address. In order for a value transfer to be authorized,
+it must be signed by the payment key for for each payment address used as
+an input in the transaction.
 
 #### UTXOs
 
@@ -172,7 +173,8 @@ queries. This cache is used to answer the following questions:
    spent, then the key would be 1:pay:sov:8675309 and the value would be
    129:455:1090.
 
-The UTXO cache is updated whenever an address spends tokens.
+The UTXO cache is updated whenever a payment transaction is written to the
+ledger.
 
 ### Transaction Fees
 The primary purpose of transaction fees is to reduce spam and to introduce a
@@ -193,6 +195,8 @@ These transactions are:
 - REVOC_REG_DEF
 - REVOC_REG_ENTRY
 - XFER_PUBLIC
+
+More write transactions may be added in the future.
 
 ### Incorporation with Hyperledger Indy
 Hyperledger Indy provides the code base for the Sovrin Ledger. This code base
@@ -365,7 +369,7 @@ for validator nodes?
 transactions, and how can this impact be mitigated?
 - Should the token and fees plugins be merged into a single plugin?
 - Is Plenum too "heavy" for token transactions?
-   - Is it even possible to use a different consensus algorithm for the payment
+   - Would it even be possible to use a different consensus algorithm for the payment
    sub-ledger?
 - Are there GDPR and privacy issues that need to be addressed?
 - How could the adjustment of the fee schedule in response to changes in the
