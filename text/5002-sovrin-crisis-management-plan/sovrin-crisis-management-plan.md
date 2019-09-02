@@ -1,17 +1,13 @@
-- Name: Sovrin Crisis Management Plan
+# 5002 Sovrin Crisis Management Plan
 - Author: Daniel Hardman, Chair TGB (.md by Darrell O'Donnell)
 - Start Date: 2018-08-15
-- PR: -
-- Jira Issue: --
 
-# Summary
-[summary]: #summary
+## Summary
 
 This document describes how Sovrin will respond to urgent crises such as a downed network, a corrupted ledger, etc. For 
 immediate action items, see [Appendix A](#appendix-a---recommendations-for-immediate-action). For a step-by-step crisis checklist, see [Appendix B](#appendix-b---crisis-checklist).
 
-# Rationale and Scope
-[rationale]: #rationale
+## Rationale and Scope
 
 No matter how robust Sovrin is, it is possible that the network could become unavailable or untrustworthy due to attack 
 or disaster. In a crisis, we need to take speedy action. This mechanism should meet the same high standards for diffuse 
@@ -24,7 +20,7 @@ they unfold. More specifically, this document focuses on crises that develop qui
 therefore cannot be managed with scheduled meetings during regular work hours. The time scale for these crises might be 
 minutes or hours, or maybe a day or two—but not weeks or months.
 
-# Human Stakeholders
+## Human Stakeholders
 
 Many people have a stake in a Sovrin network crisis. Our plan needs to think about how these people learn what’s happening, and how they contribute to a solution:
 
@@ -35,7 +31,7 @@ Many people have a stake in a Sovrin network crisis. Our plan needs to think abo
 * The Hyperledger community, who will be running the same or similar code
 * Journalists and other informed, external observers
 
-# Sample Crisis Scenarios
+## Sample Crisis Scenarios
 
 The following scenarios are representative, not exhaustive; they should suggest commonalities (or uniquenesses) in circumstance, discovery, timing, and problem-solving. How long would each of these scenarios take to be detected and handled? What research and troubleshooting might they entail? What decisions would need to be proposed and approved, and by whom? Likelihood is assessed over the next 6-month period, considers only variants of a scenario that rise to the level of a Sovrin crisis, and is entirely subjective. As the Sovrin ecosystem matures, likelihoods will change.
 
@@ -50,7 +46,7 @@ The following scenarios are representative, not exhaustive; they should suggest 
 | Sudden legal roadblock takes many nodes offline  | x  |
 | Rogue node admin misbehaves, ruining network reputation  | xx  |
 
-# General Remediations
+## General Remediations
 
 Most potential responses to disaster scenarios will draw from a common playbook. We expect the following actions to figure in many responses:
 
@@ -61,7 +57,7 @@ Most potential responses to disaster scenarios will draw from a common playbook.
 * Revoke privileges (for sysadmins on a node, for orgs acting as trust anchors, etc)
 * Issue a press release
 
-# Prioritized Goals
+## Prioritized Goals
 
 We’d like our crisis management plan to prioritize some goals above others. Circumstances may require minor tweaks, but generally, the sequence (driven by relative urgency and importance) and the emphasis should look like this:
 
@@ -73,7 +69,7 @@ We’d like our crisis management plan to prioritize some goals above others. Ci
 1. Guarantee an intelligent postmortem.
 
 
-# Suggested Approach
+## Suggested Approach
 The plan is built from the following ingredients:
 
 1. Appoint a permanent owner of this plan.
@@ -82,11 +78,11 @@ The plan is built from the following ingredients:
 1. Clarify decision-making protocols and ownership.
 1. Practice.
 
-## Permanent Owner of Plan
+### Permanent Owner of Plan
 
 We recommend that the owner be the Technical Governance Board collectively. Here, ownership is about who evolves, maintains, monitors, reports on, and practices the details of the plan. The ultimate approver of the plan is the Board of Trustees and the larger Sovrin community.
 
-## Crisis Detectors
+### Crisis Detectors
 Concerns about a developing network problem are reported to a Triage Committee consisting of TGB members, engineers, node sysadmins, paid support professionals that answer a phone day or night, etc. The design of this committee is an independent and evolving question not specified here, but in general it should have variety in expertise, access, geo, and legal jurisdiction. The full membership of the committee need not be available constantly, but at least one member of this committee should be. All members of this committee should have contact information for all other members. The Triage Committee should be accessible over various channels that have been publicized (email to [network-health@sovrin.org](mailto:network-health@sovrin.org) , Twitter, chat/IRC, phone?).
 
 **The sysadmins** who operate nodes are responsible for their own machine’s health. The `[Provisional Trust Framework LINK TK]()` requires them to agree in principle to the goal of 99.9% uptime, though it does not enforce this standard. We assume that each sysadmin will run monitoring tools that detect anomalies in network, memory, disk, and CPU usage, and that troubling signals will be noticed quickly by humans. All sysadmins have a duty to report to the Triage Committee, quickly, concerns that might be broader than a single machine.
@@ -97,7 +93,7 @@ Any **member of the Sovrin community** can also raise a concern to the Triage Co
 
 **The network itself** generates metrics of its performance. These metrics (or a subset thereof) are published to the world (giving the community an opportunity to note anomalies and ask questions); the metrics should also be monitored by automated processes capable of notifying the Triage Committee about concerns.
 
-## Escalation and Triage Procedures
+### Escalation and Triage Procedures
 
 The Triage Committee reviews all incoming reports. The first step in triage is to record a ticket in Sovrin’s JIRA instance. A submitted report should be assigned to at least one Committee member for review. How this assignment takes place should be decided by the Committee. `[TK Recommendation?]` A report that is reviewed may either be escalated for full Committee discussion, or ignored.
 
@@ -109,23 +105,20 @@ The Triage Committee is primarily an “analyze and recommend” group. Actions 
 
 The sysadmins of validator nodes, the Sovrin TGB, and the Sovrin Board of Trustees agree to be notified in real time (e.g., by phone call in the middle of the night) if the Triage Committee reaches consensus that such escalation is required.
 
-## Ownership
+### Ownership
 
 In general, the Board of Trustees must approve any action related to technical management of the Sovrin network, although day-to-day decisions have been delegated to the Technical Governance Board. The Board of Trustees also controls budget and Sovrin’s public relations strategy. Thus, the Board is the ultimate owner of collective governance choices.
 
 The stewards own their nodes. Any individual node owner may do whatever they like with their node, although acting out of harmony with a quorum of their peers may cause them to lose validator/steward status.
 
-## Practice
+### Practice
 We should identify a crisis scenario and practice its entire lifecycle. For example, we could postulate that a DDoS attack targets the Sovrin network and is able to flood it with spurious identity creation requests. The network has no bandwidth for other users; it is fully consumed with processing these useless transactions.
 
 The rehearsal should begin with someone reporting the problem over one of the channels that the Triage Committee operates. Preferably, this should happen at a time that the Committee does not know in advance. If things go well, the Committee will then assign the issue, review it, triage it, and create and execute a plan to solve the problem.
 
 One rehearsal will undoubtedly teach us a lot--but rehearsing periodically will be even more beneficial.
 
-
-
-
-# Appendix A - Recommendations for Immediate Action
+## Appendix A - Recommendations for Immediate Action
 [appendixa]: #appendixa
 
 1. ***Staff the Triage Committee.***
@@ -142,7 +135,7 @@ One rehearsal will undoubtedly teach us a lot--but rehearsing periodically will 
 1. Schedule a refresh of this plan at least quarterly.
 
 
-# Appendix B - Crisis Checklist #
+## Appendix B - Crisis Checklist
 
 1. Understand the nature of the crisis, its ramifications, and its potential solutions well enough to act intelligently,
  neither jumping too fast nor waiting too long (see Colin Powell’s 40-70 rule).
