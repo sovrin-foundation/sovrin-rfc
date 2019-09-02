@@ -1,11 +1,9 @@
-- Name: 5001-node-selection-algorithm
+# 5001: Node Selection Algorithm
 - Author: Sam Smith, Daniel Hardman
 - Start Date: 2018-05-15
 - Approval Date: 2018-06-15
-- SIP PR: https://github.com/sovrin-foundation/sovrin-sip/pull/2
 
-# SIP 5001: Node Selection Algorithm
-[summary]: #summary
+## Summary
 
 Describes an algorithm for deciding which nodes will participate in consensus, based
 on which ones satisfy business constraints and are likely to add the least risk of network downtime. This algorithm
@@ -13,7 +11,6 @@ may be implemented with manual analysis at first; later, we imagine coding it in
 software to make selection automated.
 
 ## Motivation
-[motivation]: #motivation
 
 Sovrin needs a documented, objective method for deciding which stewards will run
 validator nodes participating in consensus on the Sovrin Live Network (SLN), which
@@ -21,7 +18,6 @@ stewards will run validator nodes on the Sovrin Test Network (STN), and which wi
 run observer nodes or be "on deck" awaiting deployment.
 
 ## Tutorial
-[tutorial]: #tutorial
 
 ### Key Concepts
 
