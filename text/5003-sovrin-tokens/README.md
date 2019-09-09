@@ -1,5 +1,5 @@
 # 5003: Sovrin Tokens
-- Author: Brent Zundel brent.zundel@evernym.com
+- Author: [Brent Zundel](brent.zundel@evernym.com)
 - Start Date: 2019-03-26
 
 ## Summary
