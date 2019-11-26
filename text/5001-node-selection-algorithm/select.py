@@ -6,7 +6,8 @@ the worksheet at http://bit.ly/2GoYXTG; any worksheet with the same general layo
 different rows for stewards, and different numbers for N and M, should also be supported.
 '''
 
-import csv, os, sys, re, unittest
+import csv, os, sys, re, unittest, datetime
+from itertools import combinations
 
 max_f_for_steward_list = -1
 f_from_data_file = 0
@@ -53,7 +54,7 @@ def parse_headers(rows, skip_f=False):
         rule = rules[rule_idx]
         row = rows[row_idx]
         row_idx += 1
-        #print('Testing rule %d against row %d (%s)' % (rule_idx, row_idx, ','.join(row)))
+        print('Testing rule %d against row %d (%s)' % (rule_idx, row_idx, ','.join(row)))
         if apply_rule(row, vars, rule[0], rule[1], rule[2]):
             rule_idx += 1
             continue
@@ -76,6 +77,7 @@ def parse_stewards(rows, row_idx):
     faults = []
     while row_idx < len(rows):
         row = rows[row_idx]
+        print(row)
         if is_steward_row(row):
             stewards.append(row[0])
             mttrs.append(float(row[1]))
@@ -132,11 +134,17 @@ def max_f_for_steward_count(n):
     return max(int((n - 1) / 3), 0)
 
 def load_data(fname, requested_f=max_f_for_steward_list):
+    print("In 'Load Data'")
     rows = load_clean_csv(fname)
+    print(rows)
     file_f, scenarios, liks, row_idx = parse_headers(rows)
+    print(file_f, scenarios, liks, row_idx)
     stewards, mttrs, faults = parse_stewards(rows, row_idx)
+    print(stewards, mttrs, faults)
     # Check validity of the f value we've been given.
     max_f = max_f_for_steward_count(len(stewards))
+    if max_f > 8:
+        max_f=8
     if file_f > 0 and (requested_f == f_from_data_file):
         requested_f = file_f
     elif requested_f == max_f_for_steward_list:
@@ -209,9 +217,26 @@ class BestN:
 
 class ComboAnalysis:
     '''Encapsulate info about a single combination of stewards.'''
-    def __init__(self, combo, stewards):
+    def __init__(self, faults, combo, stewards, mttrs):
         self.combo = sorted(combo)
-        self.steward_indexes = [stewards.index(s) for s in combo]
+        self.steward_indexes = {} # row index
+        self.combo_faults = [0,0,0,0,0,0,0,0,0,0,0,0] 
+        for i in combo: # for every row index...
+            stewards_index = stewards.index(i) # row
+            self.steward_indexes[stewards_index] = mttrs[stewards_index]
+            self.combo_faults[0] += faults[stewards_index][0]
+            self.combo_faults[1] += faults[stewards_index][1]
+            self.combo_faults[2] += faults[stewards_index][2]
+            self.combo_faults[3] += faults[stewards_index][3]
+            self.combo_faults[4] += faults[stewards_index][4]
+            self.combo_faults[5] += faults[stewards_index][5]
+            self.combo_faults[6] += faults[stewards_index][6]
+            self.combo_faults[7] += faults[stewards_index][7]
+            self.combo_faults[8] += faults[stewards_index][8]
+            self.combo_faults[9] += faults[stewards_index][9]
+            self.combo_faults[10] += faults[stewards_index][10]
+            self.combo_faults[11] += faults[stewards_index][11]
+        #print(self.combo_faults)
         self.results = []
         self._total = None
     def __getattr__(self, item):
@@ -227,24 +252,24 @@ class ComboAnalysis:
 
 class ScenarioResult:
     '''Encapsulate info about one combination of stewards in one scenario.'''
-    def __init__(self, scenario, scenarios, liks, faults, combo_indexes, f, mttrs):
-        self.name = scenario
-        self.idx = scenarios.index(scenario)
-        self.likelihood = liks[self.idx]
+    def __init__(self, index, liks, combo_indexes, combo_summed_faults, f, mttrs):
+        #self.name = scenario
+        #self.idx = scenarios.index(scenario)
+        self.likelihood = liks[index]
         self.combo_indexes = combo_indexes
         self.f = f
-        self.fault_count = 0
-        relevant_mttrs = []
-        profile = []
-        for ci in combo_indexes:
-            relevant_mttrs.append(mttrs[ci])
-            faults_for_member = faults[ci]
-            n = faults_for_member[self.idx]
-            profile.append(n)
+        #self.fault_count = 0
+        #relevant_mttrs = []
+        #profile = []
+        """ for ci in combo_indexes.keys():
+            #relevant_mttrs.append(mttrs[ci])
+            n = faults[ci][index]
+            #profile.append(n)
             if n:
-                self.fault_count += 1
-        self.profile = profile
-        self.failure_distance = self.f - self.fault_count
+                self.fault_count += 1 """
+        #self.profile = profile
+        relevant_mttrs = list(combo_indexes.values())
+        self.failure_distance = self.f - combo_summed_faults
         if self.failure_distance < 0:
             relevant_mttrs.sort()
             # The MTTR of the scenario is the time it will take for the i-th node to
@@ -265,13 +290,25 @@ class ScenarioResult:
 
 def analyze(f, scenarios, liks, stewards, mttrs, faults, bestN, quiet=False):
     m = (3 * f) + 1
+    print ("m= %s",m)
     n = len(stewards)
+    print ("n= %s",n)
     total_combinations = factorial(n) / (factorial(m) * factorial(n - m))
     if not quiet:
         print('Analyzing %d total %d-steward combinations (n=%d, f=%d).' % (total_combinations, m, n, f))
     best = BestN(lambda x: x.combined_score, bestN)
-    for combo in unique_combinations(stewards, m):
+    combo_num=0
+    print(datetime.datetime.now())
+    #for combo in unique_combinations(stewards, m):
+    for combo in combinations(stewards, m):
+        combo_num = combo_num + 1
+        if (combo_num % 10000) == 0:
+            print("10K")
+            print(datetime.datetime.now())
         analyze_combo(combo, best, scenarios, liks, stewards, mttrs, faults, f)
+        if (combo_num % 100000000) == 0:
+            print(datetime.datetime.now())
+            print(best)
     return best
 
 def analyze_combo(combo, best, scenarios, liks, stewards, mttrs, faults, f):
@@ -280,11 +317,14 @@ def analyze_combo(combo, best, scenarios, liks, stewards, mttrs, faults, f):
     downtime than one of the current "top N" combinations, put this one into the "top N"
     list.
     '''
-    ca = ComboAnalysis(combo, stewards)
-    for scenario in scenarios:
-        sr = ScenarioResult(scenario, scenarios, liks, faults, ca.steward_indexes, f, mttrs)
+    ca = ComboAnalysis(faults, combo, stewards, mttrs)
+    for index in range(len(scenarios)):
+        #print(ca.combo_summed_faults)
+        summed_faults = ca.combo_faults[index]
+        sr = ScenarioResult(index, liks, ca.steward_indexes, summed_faults, f, mttrs)
         ca.results.append(sr)
     best.keep_if_better(ca)
+    del ca
 
 def unique_combinations(items, n):
     if n == 0:
