@@ -48,9 +48,9 @@ There are three facets to removing the token plugin:
 ## Reference
 [reference]: #reference
 
-We have [introduced into Indy features to aid in the removal of the token plugin](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-plugin-removal-helpers):
-* frozen ledgers
-* default fee handlers
+We have introduced into Indy features to aid in the removal of the token plugin:
+* [frozen ledgers](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-frozen-ledgers)
+* [default fee handlers](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-plugin-removal-helpers)
 
 With these new features, we can safely remove the token plugin from all Sovrin Networks. The process to remove the token will be very similar for each network.
 
