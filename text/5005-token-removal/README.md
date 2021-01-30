@@ -14,9 +14,11 @@ In January of 2018, [Sovrin published a whitepaper explaining how a token could 
 
 As explained in [SIP 5003](https://github.com/sovrin-foundation/sovrin-sip/tree/master/text/5003-sovrin-tokens), the Sovrin Token consists of a [plugin to an Indy ledger](https://github.com/sovrin-foundation/token-plugin), and a [plugin to the libindy client library](https://github.com/sovrin-foundation/libsovtoken). Neither code base has been maintained since March of 2020. The unmaintained ledger plugin which is currently installed is a risk to the health of the Sovrin Networks in some key ways:
 
-* It has only been tested on Ubuntu 16.04, which is soon to be end-of-lifed. The plugin could break while upgrading the Sovrin Networks to newer versions of Ubuntu.
+* It has only been tested on Ubuntu 16.04, which will reach end-of-life in March 2021. The plugin could break while upgrading the Sovrin Networks to newer versions of Ubuntu.
+* It has only been tested on Python 3.5, which reached end-of-life in September 2020. The rest of Indy has been difficult to upgrade, so it is unlikely the token plugin will work.
 * It depends on the deprecated [Indy Crypto](https://github.com/hyperledger/indy-node), the predecessor to [Hyperledger Ursa](https://github.com/hyperledger/ursa). Indy Crypto has not received security updates or other improvements since October 2019. Because the rest of Indy uses Ursa, there is an additional risk of a dependency conflict.
 * It’s build process depends on the Sovrin deployment of Jenkins for CI / CD, which has not been maintained since early 2020. It is likely that the unit tests and system tests won’t run.
+* It's testing process depends on [Indy SDK](https://github.com/hyperledger/indy-sdk/), which [has an uncertain future](https://github.com/hyperledger/indy-sdk/pull/2329) as development is focused on [Indy-VDR](https://github.com/hyperledger/indy-vdr/).
 * As development of [Hyperledger Indy](https://github.com/hyperledger/indy-node) continues, the Sovrin Token is not being updated to remain compatible.
 
 Given that there are no plans to use this token code, there is no incentive to maintain it. This proposal explains how to safely remove the token from the Sovrin networks to avoid the risks presented by this unmaintained code.
