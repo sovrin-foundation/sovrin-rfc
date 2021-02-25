@@ -44,7 +44,7 @@ Each Sovrin network should be separately considered:
 There are three facets to removing the token plugin:
 1. Each network that has the token plugin installed will need to drop the token ledger while keeping the audit ledger consistent.
 2. Networks that have recorded token transactions need to ensure the history of fees paid when writing to the domain ledger fulfills the auth_rules recorded on the config ledger at the time of the write.
-3. The history of transfers of value will be unrecoverably lost when the token ledger is dropped during the plugin removal.
+3. The history of transfers of value will be unrecoverably lost when the token ledger is dropped during the plugin removal. This is appropriate, because token transactions are only on the test networks (StagingNet and BuilderNet) where the history is not expected to be permanent (see [_Sovrin Steward Technical and Organizational Policies_ section "Permissioned Test Network Policies"](Sovrin Steward Technical and Organizational Policies)).
 
 
 ## Reference
@@ -52,7 +52,7 @@ There are three facets to removing the token plugin:
 
 We have introduced into Indy features to aid in the removal of the token plugin:
 * [frozen ledgers](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-frozen-ledgers)
-* [default fee handlers](https://github.com/hyperledger/indy-hipe/tree/master/text/0162-plugin-removal-helpers)
+* [default fee handlers](https://github.com/hyperledger/indy-hipe/tree/master/text/0163-default-fee-handler)
 
 With these new features, we can safely remove the token plugin from all Sovrin Networks. The process to remove the token will be very similar for each network.
 
@@ -64,7 +64,7 @@ Some work is required prior to removing the token from the networks:
 
 
 ### Sovrin BuilderNet
-Sovrin MainNet has the token plugin installed and a token ledger initialized, but has no token transactions. The removal process would proceed as follows:
+Sovrin BuilderNet has the token plugin installed and a token ledger initialized, but has few token transactions. The removal process would proceed as follows:
 1. Update the auth_rules to not reference fees as a method of ledger write authorization. (This is an optional step, as any fees mentioned in auth_rules will be ignored once the plugin is removed, but removing references to unused functionality will avoid confusion in the future.)
 2. Upgrade the network to a version of Indy that supports frozen ledgers and default fee handlers. (This can probably be a rolling upgrade with no downtime.)
 3. Send the LEDGERS_FREEZE transaction to freeze the token ledger.
